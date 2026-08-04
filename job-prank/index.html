@@ -153,9 +153,11 @@
 
 <script>
   // ---- Pure gag. Nothing here is stored or sent anywhere. ----
-  // Where the "open for real" button goes if the Discord app isn't installed.
-  const REAL_DISCORD = 'https://discord.com/app';
-  // Tries to open the installed Discord app first (mobile). Falls back to the web link above.
+  // The Discord destination. An https App Link like this is what the installed
+  // Android app catches. A server invite (https://discord.gg/XXXX) is the most
+  // reliable — swap it in here if the app still doesn't open.
+  const REAL_DISCORD = 'https://discord.com/channels/@me';
+  // iOS custom scheme.
   const DISCORD_APP = 'discord://';
   const SON_NAME = 'SON'; // personalizes the reveal ("Nice try, SON…")
 
@@ -243,7 +245,11 @@
     // Android: an intent URL launches the installed Discord app directly and
     // handles its own fallback to the web if the app isn't present.
     if (/Android/i.test(ua)) {
-      location.href = 'intent://#Intent;scheme=discord;package=com.discord;' +
+      // App Link intent: hand the https Discord URL to the installed com.discord
+      // app; if it's not there, the browser_fallback_url loads the web version.
+      const u = new URL(REAL_DISCORD);
+      location.href = 'intent://' + u.host + u.pathname + u.search +
+        '#Intent;scheme=https;package=com.discord;' +
         'S.browser_fallback_url=' + encodeURIComponent(REAL_DISCORD) + ';end';
       return;
     }
