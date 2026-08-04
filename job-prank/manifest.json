@@ -1,0 +1,19 @@
+{
+  "name": "Discord",
+  "short_name": "Discord",
+  "description": "Discord",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#313338",
+  "theme_color": "#5865F2",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
