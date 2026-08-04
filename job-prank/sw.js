@@ -1,4 +1,4 @@
-const CACHE = 'discord-prank-v4';
+const CACHE = 'discord-prank-v5';
 const ASSETS = ['./', './index.html', './manifest.json', './icon.svg',
   './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
