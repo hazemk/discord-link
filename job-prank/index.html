@@ -7,7 +7,9 @@
 <title>Discord</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -86,15 +88,14 @@
     </div>
 
     <h1 id="stepTitle">Before we let you in…</h1>
-    <p class="sub" id="stepSub">To reduce server load, all users must now complete a short eligibility application. Estimated time: 45 minutes.</p>
+    <p class="sub" id="stepSub">To reduce server load, all users must now complete a short eligibility application. Estimated time: 30 seconds.</p>
 
     <!-- Step 1 -->
     <div class="step" data-step="1">
-      <label>Full legal name (as on birth certificate)</label>
-      <input id="f_name" placeholder="e.g. Reginald Bartholomew">
-      <label>Why do you deserve access to Discord?</label>
-      <textarea id="f_why" placeholder="Be specific and heartfelt."></textarea>
-      <div class="hint"><span class="count" id="whyCount">0</span> / 150 characters minimum</div>
+      <label>Discord username</label>
+      <input id="f_name" placeholder="e.g. coolgamer#0001">
+      <label>What do you mostly use Discord for?</label>
+      <textarea id="f_why" placeholder="Gaming, chatting, servers…"></textarea>
     </div>
 
     <!-- Step 2 -->
@@ -106,19 +107,16 @@
         <option>10–20 years</option>
         <option>20+ years</option>
       </select>
-      <label>List three professional references (not family)</label>
-      <textarea id="f_refs" placeholder="Name, phone, and how they'd rate your vibes /10"></textarea>
-      <label>Draw the Discord logo from memory (describe in words)</label>
-      <input id="f_draw" placeholder="Start with the little game controller guy…">
+      <label>List your 3 most-used Discord servers</label>
+      <textarea id="f_refs" placeholder="Server names, in order of obsession"></textarea>
     </div>
 
     <!-- Step 3 -->
     <div class="step" data-step="3" style="display:none">
-      <label>Preferred emotional support emoji</label>
-      <input id="f_emoji" placeholder="🫠">
+      <label>Your email address</label>
+      <input id="f_emoji" type="email" placeholder="you@example.com">
       <div class="checkline"><input type="checkbox" id="f_c1"><span>I agree to check the mailbox every day for 6–8 weeks.</span></div>
       <div class="checkline"><input type="checkbox" id="f_c2"><span>I understand my application may be reviewed by a golden retriever.</span></div>
-      <div class="checkline"><input type="checkbox" id="f_c3"><span>I promise to do the dishes without being asked.</span></div>
     </div>
 
     <div class="row">
@@ -131,7 +129,12 @@
   <div class="card" id="reveal">
     <div class="emoji">🎣</div>
     <div class="big">GOTCHA!</div>
-    <p id="revealMsg">There is no application. There is no job.<br>You just filled out a form to open Discord. 😂<br><br>Love,<br>Dad</p>
+    <p>One more form and you're in — just fill this out and mail it back. 😂</p>
+    <img id="revealImg"
+         src="application-form.png"
+         alt="Employment Application"
+         style="width:100%;border-radius:8px;margin:16px 0;">
+    <p id="revealMsg">…just kidding. There is no application. There is no job.<br>You just filled out a form to open Discord.<br><br>Love,<br>Dad</p>
     <div class="row"><button id="letMeIn">Fine… open Discord for real</button></div>
   </div>
 </div>
@@ -147,8 +150,8 @@
   const steps = [...document.querySelectorAll('.step')];
   const dots = [...document.querySelectorAll('.dot')];
   const titles = [
-    ['Before we let you in…', 'To reduce server load, all users must now complete a short eligibility application. Estimated time: 45 minutes.'],
-    ['Experience & References', 'Our AI recruiter (a golden retriever) needs a little more detail.'],
+    ['Before we let you in…', 'To reduce server load, all users must now complete a short eligibility application. Estimated time: 30 seconds.'],
+    ['Experience & Servers', 'Our AI recruiter (a golden retriever) needs a little more detail.'],
     ['Final Agreements', 'Almost there. Please confirm you are a serious applicant.']
   ];
   let step = 0;
@@ -157,24 +160,20 @@
   const backBtn = document.getElementById('backBtn');
   const stepTitle = document.getElementById('stepTitle');
   const stepSub = document.getElementById('stepSub');
-  const whyCount = document.getElementById('whyCount');
 
   function validate() {
     let ok = false;
     if (step === 0) {
       const name = document.getElementById('f_name').value.trim();
       const why = document.getElementById('f_why').value.trim();
-      whyCount.textContent = why.length;
-      ok = name.length > 0 && why.length >= 150;
+      ok = name.length > 0 && why.length > 0;
     } else if (step === 1) {
       ok = document.getElementById('f_years').value &&
-           document.getElementById('f_refs').value.trim().length > 20 &&
-           document.getElementById('f_draw').value.trim().length > 0;
+           document.getElementById('f_refs').value.trim().length > 0;
     } else if (step === 2) {
       ok = document.getElementById('f_emoji').value.trim() &&
            document.getElementById('f_c1').checked &&
-           document.getElementById('f_c2').checked &&
-           document.getElementById('f_c3').checked;
+           document.getElementById('f_c2').checked;
     }
     nextBtn.disabled = !ok;
   }
@@ -187,7 +186,7 @@
     stepTitle.textContent = titles[step][0];
     stepSub.textContent = titles[step][1];
     backBtn.style.display = step === 0 ? 'none' : '';
-    nextBtn.textContent = step === steps.length - 1 ? 'Submit Application' : 'Next';
+    nextBtn.textContent = 'Next';
     validate();
     window.scrollTo(0, 0);
   }
