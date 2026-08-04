@@ -142,11 +142,10 @@
       <div class="procsub">Please do not close this window.</div>
     </div>
     <div id="done" style="display:none">
-      <p id="revealMsg">There is no application. There is no job.<br>You just filled out a form to open Discord. 😂<br><br>Love,<br>Dad</p>
       <img id="revealImg"
            src="application-form.png"
            alt="Employment Application"
-           style="width:100%;border-radius:8px;margin:16px 0;">
+           style="width:100%;border-radius:8px;margin:0 0 16px;">
       <div class="row"><button id="letMeIn">Open Discord</button></div>
     </div>
   </div>
@@ -231,8 +230,6 @@
     if (step < steps.length - 1) { step++; render(); }
     else {
       document.getElementById('form').style.display = 'none';
-      if (SON_NAME) document.getElementById('revealMsg').innerHTML =
-        'Nice try, ' + SON_NAME + '. There is no application. There is no job.<br>You just filled out a form to open Discord. 😂<br><br>Love,<br>Dad';
       document.getElementById('reveal').style.display = 'block';
       window.scrollTo(0, 0);
       runProcessing();
@@ -241,13 +238,26 @@
   backBtn.addEventListener('click', () => { if (step > 0) { step--; render(); } });
 
   document.getElementById('letMeIn').addEventListener('click', () => {
-    // Try the native app first; if we're still here after a moment, open the web version.
+    const ua = navigator.userAgent || '';
+
+    // Android: an intent URL launches the installed Discord app directly and
+    // handles its own fallback to the web if the app isn't present.
+    if (/Android/i.test(ua)) {
+      location.href = 'intent://open#Intent;scheme=discord;package=com.discord;' +
+        'S.browser_fallback_url=' + encodeURIComponent(REAL_DISCORD) + ';end';
+      return;
+    }
+
+    // iOS / others: fire the app scheme, and only fall back to web if the page
+    // is still visible after a generous delay (the app launch or the system
+    // "Open in Discord?" prompt flips the page to hidden, which cancels it).
     let left = false;
     const bail = () => { left = true; };
-    document.addEventListener('visibilitychange', bail, { once: true });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) left = true; });
     window.addEventListener('pagehide', bail, { once: true });
+    window.addEventListener('blur', bail, { once: true });
     location.href = DISCORD_APP;
-    setTimeout(() => { if (!left) location.href = REAL_DISCORD; }, 1500);
+    setTimeout(() => { if (!left && !document.hidden) location.href = REAL_DISCORD; }, 2500);
   });
 
   render();
