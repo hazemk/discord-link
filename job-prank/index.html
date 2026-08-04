@@ -74,6 +74,12 @@
     transition: opacity .18s; }
   .proc.fade { opacity: 0; }
   .procsub { font-size: 13px; color: #80848e; margin-top: 8px; }
+  #done .fullimg {
+    display: block; width: 100vw; margin-left: calc(50% - 50vw);
+    border-radius: 0;
+  }
+  #done .continue { font-size: 17px; color: #fff; font-weight: 600;
+    text-align: center; margin: 20px 0 4px; }
 
   .foot { text-align: center; font-size: 11px; color: #4e5058; margin-top: 22px; }
 </style>
@@ -142,10 +148,10 @@
       <div class="procsub">Please do not close this window.</div>
     </div>
     <div id="done" style="display:none">
-      <img id="revealImg"
+      <img id="revealImg" class="fullimg"
            src="application-form.png"
-           alt="Employment Application"
-           style="width:100%;border-radius:8px;margin:0 0 16px;">
+           alt="Employment Application">
+      <p class="continue">Once done you can continue SON :)</p>
       <div class="row"><button id="letMeIn">Open Discord</button></div>
     </div>
   </div>
