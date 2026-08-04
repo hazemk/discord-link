@@ -62,9 +62,18 @@
   .checkline span { font-size: 13px; color: #dbdee1; line-height: 1.5; }
 
   #reveal { display: none; text-align: center; padding: 40px 10px; }
-  #reveal .big { font-size: 26px; font-weight: 800; margin: 18px 0 10px; }
   #reveal p { color: #b5bac1; font-size: 15px; line-height: 1.6; }
-  #reveal .emoji { font-size: 64px; }
+  #loader { padding: 26px 0; }
+  .spinner {
+    width: 48px; height: 48px; margin: 0 auto 24px;
+    border: 5px solid #1e1f22; border-top-color: #5865F2;
+    border-radius: 50%; animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .proc { font-size: 19px; font-weight: 600; color: #fff; min-height: 24px;
+    transition: opacity .18s; }
+  .proc.fade { opacity: 0; }
+  .procsub { font-size: 13px; color: #80848e; margin-top: 8px; }
 
   .foot { text-align: center; font-size: 11px; color: #4e5058; margin-top: 22px; }
 </style>
@@ -127,15 +136,15 @@
   </div>
 
   <div class="card" id="reveal">
-    <div class="emoji">🎣</div>
-    <div class="big">GOTCHA!</div>
-    <p>One more form and you're in — just fill this out and mail it back. 😂</p>
-    <img id="revealImg"
-         src="application-form.png"
-         alt="Employment Application"
-         style="width:100%;border-radius:8px;margin:16px 0;">
-    <p id="revealMsg">…just kidding. There is no application. There is no job.<br>You just filled out a form to open Discord.<br><br>Love,<br>Dad</p>
-    <div class="row"><button id="letMeIn">Fine… open Discord for real</button></div>
+    <div id="loader">
+      <div class="spinner"></div>
+      <div class="proc" id="procText">Processing…</div>
+      <div class="procsub">Please do not close this window.</div>
+    </div>
+    <div id="done" style="display:none">
+      <p id="revealMsg">There is no application. There is no job.<br>You just filled out a form to open Discord. 😂<br><br>Love,<br>Dad</p>
+      <div class="row"><button id="letMeIn">Fine… open Discord for real</button></div>
+    </div>
   </div>
 </div>
 
@@ -191,15 +200,38 @@
     window.scrollTo(0, 0);
   }
 
+  const PROC_STEPS = ['Processing…', 'Searching…', 'Analysing…', 'Filtering…',
+    'Re-filtering…', 'Cross-referencing…', 'Verifying…', 'Finalising…'];
+
+  function runProcessing() {
+    const el = document.getElementById('procText');
+    let i = 0;
+    const timer = setInterval(() => {
+      el.classList.add('fade');
+      setTimeout(() => {
+        i++;
+        if (i < PROC_STEPS.length) {
+          el.textContent = PROC_STEPS[i];
+          el.classList.remove('fade');
+        } else {
+          clearInterval(timer);
+          document.getElementById('loader').style.display = 'none';
+          document.getElementById('done').style.display = 'block';
+        }
+      }, 180);
+    }, 1400);
+    el.textContent = PROC_STEPS[0];
+  }
+
   nextBtn.addEventListener('click', () => {
     if (step < steps.length - 1) { step++; render(); }
     else {
       document.getElementById('form').style.display = 'none';
-      const r = document.getElementById('reveal');
       if (SON_NAME) document.getElementById('revealMsg').innerHTML =
         'Nice try, ' + SON_NAME + '. There is no application. There is no job.<br>You just filled out a form to open Discord. 😂<br><br>Love,<br>Dad';
-      r.style.display = 'block';
+      document.getElementById('reveal').style.display = 'block';
       window.scrollTo(0, 0);
+      runProcessing();
     }
   });
   backBtn.addEventListener('click', () => { if (step > 0) { step--; render(); } });
