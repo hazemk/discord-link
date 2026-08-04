@@ -243,7 +243,7 @@
     // Android: an intent URL launches the installed Discord app directly and
     // handles its own fallback to the web if the app isn't present.
     if (/Android/i.test(ua)) {
-      location.href = 'intent://open#Intent;scheme=discord;package=com.discord;' +
+      location.href = 'intent://#Intent;scheme=discord;package=com.discord;' +
         'S.browser_fallback_url=' + encodeURIComponent(REAL_DISCORD) + ';end';
       return;
     }
