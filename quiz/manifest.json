@@ -1,7 +1,7 @@
 {
-  "name": "مَنْ يَرْبَحُ الدِيسْكُورْد؟",
+  "name": "Discord",
   "short_name": "Discord",
-  "description": "Quiz",
+  "description": "Discord",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "./index.html",
