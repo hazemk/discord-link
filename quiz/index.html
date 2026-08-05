@@ -42,14 +42,14 @@
   /* ---------- top bar ---------- */
   .top{ display:flex; align-items:center; gap:10px; margin-bottom:clamp(6px,1.2vh,12px); flex:0 0 auto; }
   .crest{
-    width:clamp(30px,4.6vh,40px); height:clamp(30px,4.6vh,40px);
+    width:clamp(32px,5.05vh,40px); height:clamp(32px,5.05vh,40px);
     border-radius:12px; flex:0 0 auto;
     background:linear-gradient(145deg,#5865F2,#3f47b8);
     display:flex; align-items:center; justify-content:center;
     box-shadow:0 4px 14px #5865f255;
   }
   .crest svg{ width:58%; height:58%; fill:#fff; }
-  .title{ font-size:clamp(13px,1.9vh,16px); font-weight:800; line-height:1.25; }
+  .title{ font-size:clamp(14px,2.05vh,16px); font-weight:800; line-height:1.25; }
   .title span{ display:block; font-size:clamp(9px,1.3vh,11px); font-weight:600; color:#f0b232; letter-spacing:.2px; }
   .best{ margin-inline-start:auto; font-size:clamp(9px,1.3vh,11px); color:#8b90b8; text-align:center; line-height:1.4; }
   .best b{ display:block; font-size:clamp(12px,1.8vh,15px); color:#f0b232; }
@@ -63,9 +63,9 @@
     margin:0 0 clamp(7px,1.4vh,14px); flex:0 0 auto;
   }
   .rung{
-    flex:1; height:clamp(26px,4.4vh,40px); border-radius:9px; background:#20224a;
+    flex:1; height:clamp(28px,5.1vh,40px); border-radius:9px; background:#20224a;
     border:1.5px solid #2c2f5e; display:flex; align-items:center; justify-content:center;
-    font-size:clamp(12px,1.9vh,15px); font-weight:800; color:#5d628f;
+    font-size:clamp(12px,1.95vh,15px); font-weight:800; color:#5d628f;
     transition:all .35s cubic-bezier(.34,1.4,.64,1); position:relative;
   }
   .rung.win{ border-color:#f0b23255; color:#8a7a45; }
@@ -87,21 +87,21 @@
   /* the question card owns the leftover height and lays itself out inside it */
   #qcard{ flex:1; min-height:0; display:flex; flex-direction:column; }
   .qhead{ display:flex; align-items:center; gap:10px; margin-bottom:clamp(6px,1.2vh,12px); flex:0 0 auto; }
-  .qnum{ font-size:clamp(9px,1.3vh,11px); font-weight:700; color:#8b90b8; letter-spacing:.4px; flex:1; line-height:1.6; }
+  .qnum{ font-size:clamp(10px,1.4vh,11px); font-weight:700; color:#8b90b8; letter-spacing:.4px; flex:1; line-height:1.6; }
 
   /* ---------- countdown ---------- */
   .timerwrap{ flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:2px; }
-  .timer{ position:relative; width:clamp(38px,6.4vh,52px); height:clamp(38px,6.4vh,52px); }
+  .timer{ position:relative; width:clamp(40px,6.7vh,52px); height:clamp(40px,6.7vh,52px); }
   .timer svg{ width:100%; height:100%; transform:rotate(-90deg); }
   .timer circle{ fill:none; stroke-width:5; stroke-linecap:round; }
   .ring-bg{ stroke:#2c2f5e; }
   .ring-fg{ stroke:#5fe39b; transition:stroke .3s; }
   .tnum{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-size:clamp(14px,2.4vh,19px); font-weight:800; color:#5fe39b; transition:color .3s;
+    font-size:clamp(15px,2.5vh,19px); font-weight:800; color:#5fe39b; transition:color .3s;
     font-variant-numeric:tabular-nums;
   }
-  .tcap{ font-size:clamp(8px,1.2vh,10px); font-weight:800; color:#5fe39b; letter-spacing:.3px; transition:color .3s; }
+  .tcap{ font-size:clamp(9px,1.3vh,10px); font-weight:800; color:#5fe39b; letter-spacing:.3px; transition:color .3s; }
   .timer.warn .ring-fg{ stroke:#f0b232; } .timer.warn .tnum{ color:#f0b232; }
   .timer.danger .ring-fg{ stroke:#ff6b6b; } .timer.danger .tnum{ color:#ff6b6b; }
   .timer.danger{ animation:tick 1s ease-in-out infinite; }
@@ -120,7 +120,7 @@
   .card.danger{ border-color:#ff6b6b88; box-shadow:0 10px 34px #00000055, 0 0 0 2px #ff6b6b33; }
   /* absorbs whatever height is spare, and gives it back when the screen is short */
   .q{
-    font-size:clamp(14px,2.45vh,23px); font-weight:800; line-height:1.7; text-align:center;
+    font-size:clamp(15px,2.9vh,23px); font-weight:800; line-height:1.75; text-align:center;
     margin:0 0 clamp(8px,1.5vh,18px); flex:0 1 auto; min-height:0;
     display:flex; align-items:center; justify-content:center;
     overflow-y:auto;
@@ -129,17 +129,17 @@
   .opts{ display:flex; flex-direction:column; gap:clamp(5px,1vh,10px); flex:1 1 auto; min-height:0; }
   .opt{
     display:flex; align-items:center; gap:clamp(7px,2vw,12px); width:100%; text-align:right;
-    padding:clamp(7px,1.3vh,14px) clamp(9px,3vw,14px);
+    padding:clamp(9px,1.75vh,14px) clamp(10px,3.5vw,14px);
     border:1.5px solid #3a3d75; border-radius:13px;
     background:#191b38; color:#fff; font-family:inherit;
-    font-size:clamp(13px,2vh,19px); font-weight:700; line-height:1.5; cursor:pointer;
+    font-size:clamp(13px,2.4vh,19px); font-weight:700; line-height:1.55; cursor:pointer;
     flex:1 1 0; min-height:0;
     transition:transform .12s, background .18s, border-color .18s;
   }
   .opt:active{ transform:scale(.98); }
   .opt .k{
-    flex:0 0 auto; width:clamp(22px,3.4vh,30px); height:clamp(22px,3.4vh,30px); border-radius:50%;
-    background:#2c2f5e; color:#c9cdf5; font-size:clamp(11px,1.7vh,14px); font-weight:800;
+    flex:0 0 auto; width:clamp(24px,3.75vh,30px); height:clamp(24px,3.75vh,30px); border-radius:50%;
+    background:#2c2f5e; color:#c9cdf5; font-size:clamp(11px,1.85vh,14px); font-weight:800;
     display:flex; align-items:center; justify-content:center;
   }
   .opt.sel{ background:#3a3266; border-color:#f0b232; }
@@ -155,10 +155,10 @@
 
   /* ---------- actions ---------- */
   .go{
-    width:100%; margin-top:clamp(8px,1.5vh,16px); padding:clamp(9px,1.7vh,15px);
+    width:100%; margin-top:clamp(8px,1.5vh,16px); padding:clamp(11px,1.95vh,15px);
     border:0; border-radius:13px; flex:0 0 auto;
     background:linear-gradient(145deg,#f0b232,#d3901a); color:#241a00;
-    font-family:inherit; font-size:clamp(14px,2.2vh,19px); font-weight:800; cursor:pointer;
+    font-family:inherit; font-size:clamp(15px,2.45vh,19px); font-weight:800; cursor:pointer;
     transition:opacity .2s, transform .12s;
   }
   .go:disabled{ opacity:.28; cursor:default; }
@@ -166,9 +166,9 @@
 
   .lifelines{ display:flex; gap:clamp(6px,2vw,9px); margin-top:clamp(7px,1.3vh,14px); flex:0 0 auto; }
   .ll{
-    flex:1; padding:clamp(7px,1.3vh,11px) 6px; border:1.5px solid #3a3d75; border-radius:12px;
+    flex:1; padding:clamp(9px,1.45vh,11px) 6px; border:1.5px solid #3a3d75; border-radius:12px;
     background:#191b38; color:#c9cdf5; font-family:inherit;
-    font-size:clamp(11px,1.7vh,14px); font-weight:700; cursor:pointer; transition:opacity .2s;
+    font-size:clamp(12px,1.85vh,14px); font-weight:700; cursor:pointer; transition:opacity .2s;
   }
   .ll:active{ background:#242749; }
   .ll:disabled{ opacity:.25; cursor:default; }
@@ -176,7 +176,7 @@
 
   /* ---------- feedback ---------- */
   .flash{
-    text-align:center; font-size:clamp(12px,1.9vh,19px); font-weight:800;
+    text-align:center; font-size:clamp(13px,2.55vh,20px); font-weight:800;
     margin-top:clamp(5px,1vh,12px); min-height:clamp(17px,2.6vh,28px); line-height:1.45;
     flex:0 0 auto;
   }
@@ -186,7 +186,7 @@
     margin-top:clamp(6px,1.2vh,14px); padding:clamp(7px,1.3vh,12px) clamp(9px,3vw,14px);
     border-radius:12px; flex:0 0 auto;
     background:#2b2450; border:1.5px dashed #f0b23277;
-    font-size:clamp(12px,1.85vh,17px); line-height:1.65; color:#ffe2a8; display:none;
+    font-size:clamp(13px,2.2vh,17px); line-height:1.7; color:#ffe2a8; display:none;
   }
 
   /* ---------- screens ---------- */
@@ -194,24 +194,24 @@
   .screen.on{ display:block; }
 
   .hero{ text-align:center; padding:clamp(8px,2.4vh,26px) 6px clamp(4px,1vh,8px); }
-  .hero h1{ font-size:clamp(19px,3.4vh,31px); font-weight:800; margin:0 0 6px; line-height:1.4; }
+  .hero h1{ font-size:clamp(22px,3.95vh,31px); font-weight:800; margin:0 0 6px; line-height:1.4; }
   .hero h1 em{ font-style:normal; color:#f0b232; }
-  .hero p{ font-size:clamp(13px,2vh,17px); line-height:1.75; color:#b9bde0; margin:0 auto 4px; max-width:400px; }
+  .hero p{ font-size:clamp(14px,2.2vh,17px); line-height:1.8; color:#b9bde0; margin:0 auto 4px; max-width:400px; }
   .rules{
     text-align:right; background:#1c1e3d; border:1px solid #33366b;
     border-radius:14px; padding:clamp(9px,1.7vh,16px) clamp(11px,3.5vw,18px);
     margin:clamp(9px,1.8vh,18px) 0 4px;
   }
   .rules{ padding-inline-start:clamp(20px,5vw,30px); }
-  .rules li{ font-size:clamp(12px,1.85vh,16px); line-height:1.75; color:#d5d8f0; margin-bottom:2px; }
+  .rules li{ font-size:clamp(13px,2.05vh,16px); line-height:1.85; color:#d5d8f0; margin-bottom:2px; }
   .rules b{ color:#f0b232; }
-  .trophy{ font-size:clamp(34px,6.5vh,62px); line-height:1; margin-bottom:clamp(2px,.8vh,6px); }
+  .trophy{ font-size:clamp(38px,7.9vh,62px); line-height:1; margin-bottom:clamp(2px,.8vh,6px); }
 
   #confetti{ position:fixed; inset:0; pointer-events:none; display:none; z-index:9; }
 
   .foot{ text-align:center; font-size:clamp(9px,1.3vh,11px); color:#4a4e78; margin-top:clamp(8px,1.4vh,18px); flex:0 0 auto; }
   /* on a short panel the footer is the first thing to go */
-  @media (max-height:640px){ #scGame .foot{ display:none; } }
+  @media (max-height:760px){ #scGame .foot{ display:none; } }
 </style>
 </head>
 <body>
