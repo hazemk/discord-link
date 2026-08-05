@@ -60,7 +60,9 @@
      row-reverse here — it cancels the RTL and flips the numbers back. */
   .ladder{
     display:flex; gap:clamp(3px,.8vw,5px);
-    margin:0 0 clamp(7px,1.4vh,14px); flex:0 0 auto;
+    /* headroom for the ⭐ and for the active rung's lift, which would
+       otherwise be clipped against the top of the screen */
+    padding:10px 3px 0; margin:0 0 clamp(4px,1vh,10px); flex:0 0 auto;
   }
   .rung{
     flex:1; height:clamp(28px,5.1vh,40px); border-radius:9px; background:#20224a;
@@ -73,9 +75,12 @@
   .rung.done.win{ background:#e8a020; border-color:#ffc95c; color:#241a00; }
   .rung.now{
     background:#5865F2; border-color:#98a0ff; color:#fff;
-    transform:scale(1.14); box-shadow:0 0 0 3px #5865f233, 0 5px 16px #5865f266;
+    /* lifts, but only vertically — a horizontal scale on the first or last
+       rung pushes it past the screen edge and gets cut off */
+    transform:translateY(-3px); z-index:2;
+    box-shadow:0 0 0 3px #5865f233, 0 6px 18px #5865f277;
   }
-  .rung .star{ position:absolute; top:-9px; font-size:12px; }
+  .rung .star{ position:absolute; top:-10px; font-size:12px; line-height:1; }
 
   /* ---------- card ---------- */
   .card{
@@ -129,14 +134,14 @@
   .opts{ display:flex; flex-direction:column; gap:clamp(5px,1vh,10px); flex:1 1 auto; min-height:0; }
   .opt{
     display:flex; align-items:center; gap:clamp(7px,2vw,12px); width:100%; text-align:right;
-    padding:clamp(11px,2.1vh,17px) clamp(10px,3.5vw,14px);
+    padding:clamp(13px,2.6vh,21px) clamp(10px,3.5vw,14px);
     border:1.5px solid #3a3d75; border-radius:13px;
     background:#191b38; color:#fff; font-family:inherit;
     font-size:clamp(13px,2.4vh,19px); font-weight:700; line-height:1.55; cursor:pointer;
     /* Taller tap targets. Basis auto, not 0, so a two-line answer keeps its
        own height instead of being squeezed into an equal quarter and clipped;
        the min-height is the floor and any spare height is shared on top. */
-    flex:1 1 auto; min-height:clamp(44px,6.8vh,58px);
+    flex:1 1 auto; min-height:clamp(52px,8.4vh,74px);
     transition:transform .12s, background .18s, border-color .18s;
   }
   .opt:active{ transform:scale(.98); }
@@ -213,8 +218,6 @@
   #confetti{ position:fixed; inset:0; pointer-events:none; display:none; z-index:9; }
 
   .foot{ text-align:center; font-size:clamp(9px,1.3vh,11px); color:#4a4e78; margin-top:clamp(8px,1.4vh,18px); flex:0 0 auto; }
-  /* on a short panel the footer is the first thing to go */
-  @media (max-height:760px){ #scGame .foot{ display:none; } }
 </style>
 </head>
 <body>
@@ -278,7 +281,6 @@
         <button class="ll" id="llHint">💡 مُسَاعَدَة <b id="cHint"></b></button>
       </div>
     </div>
-    <div class="foot">اِقْرَأِ السُّؤَالَ بِهُدُوء 🙂</div>
   </div>
 
   <!-- ============ WIN ============ -->
