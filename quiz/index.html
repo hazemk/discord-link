@@ -134,14 +134,14 @@
   .opts{ display:flex; flex-direction:column; gap:clamp(5px,1vh,10px); flex:1 1 auto; min-height:0; }
   .opt{
     display:flex; align-items:center; gap:clamp(7px,2vw,12px); width:100%; text-align:right;
-    padding:clamp(13px,2.6vh,21px) clamp(10px,3.5vw,14px);
+    padding:clamp(11px,2.15vh,17px) clamp(10px,3.5vw,14px);
     border:1.5px solid #3a3d75; border-radius:13px;
     background:#191b38; color:#fff; font-family:inherit;
     font-size:clamp(13px,2.4vh,19px); font-weight:700; line-height:1.55; cursor:pointer;
     /* Taller tap targets. Basis auto, not 0, so a two-line answer keeps its
        own height instead of being squeezed into an equal quarter and clipped;
        the min-height is the floor and any spare height is shared on top. */
-    flex:1 1 auto; min-height:clamp(52px,8.4vh,74px);
+    flex:1 1 auto; min-height:clamp(48px,7.6vh,67px);
     transition:transform .12s, background .18s, border-color .18s;
   }
   .opt:active{ transform:scale(.98); }
