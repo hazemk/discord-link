@@ -6,7 +6,7 @@
   "dir": "rtl",
   "start_url": "./index.html",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait",
   "background_color": "#12132a",
   "theme_color": "#1a1b2e",

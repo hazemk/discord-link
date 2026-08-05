@@ -20,7 +20,11 @@
     font-family:'SF Arabic','Geeza Pro','Noto Naskh Arabic','Amiri','Tahoma',sans-serif;
   }
   body{
-    background:
+    /* background-color is set separately on purpose: the `background`
+       shorthand below resets it to transparent, and Android samples a solid
+       colour to tint its system bars. Without it they fall back to grey. */
+    background-color:#0e0f22;
+    background-image:
       radial-gradient(120% 80% at 50% 0%, #26285a 0%, #161733 60%, transparent 100%),
       linear-gradient(180deg,#1a1b3a 0%,#0e0f22 100%);
     background-attachment:fixed;

@@ -1,4 +1,4 @@
-const CACHE = 'discord-quiz-v1';
+const CACHE = 'discord-quiz-v2';   // bumped so the old manifest is evicted
 const ASSETS = ['./', './index.html', './questions.js', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', (e) => {
