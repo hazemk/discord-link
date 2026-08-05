@@ -1,0 +1,21 @@
+{
+  "name": "مَنْ يَرْبَحُ الدِيسْكُورْد؟",
+  "short_name": "Discord",
+  "description": "Quiz",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#12132a",
+  "theme_color": "#1a1b2e",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

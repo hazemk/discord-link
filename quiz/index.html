@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a1b2e">
+<title>مَنْ يَرْبَحُ الدِيسْكُورْد؟</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{
+    margin:0; padding:0; min-height:100%; width:100%;
+    background:#12132a; color:#fff; overscroll-behavior:none;
+    font-family:'SF Arabic','Geeza Pro','Noto Naskh Arabic','Amiri','Tahoma',sans-serif;
+  }
+  body{
+    background:
+      radial-gradient(120% 80% at 50% 0%, #26285a 0%, #161733 60%, transparent 100%),
+      linear-gradient(180deg,#1a1b3a 0%,#0e0f22 100%);
+    background-attachment:fixed;
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  }
+  .wrap{ max-width:520px; margin:0 auto; padding:14px 16px 28px; }
+
+  /* ---------- top bar ---------- */
+  .top{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .crest{
+    width:40px; height:40px; border-radius:12px; flex:0 0 auto;
+    background:linear-gradient(145deg,#5865F2,#3f47b8);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 14px #5865f255;
+  }
+  .crest svg{ width:23px; height:23px; fill:#fff; }
+  .title{ font-size:16px; font-weight:800; line-height:1.25; }
+  .title span{ display:block; font-size:11px; font-weight:600; color:#f0b232; letter-spacing:.2px; }
+  .best{ margin-inline-start:auto; font-size:11px; color:#8b90b8; text-align:center; line-height:1.4; }
+  .best b{ display:block; font-size:15px; color:#f0b232; }
+
+  /* ---------- ladder ---------- */
+  .ladder{ display:flex; flex-direction:row-reverse; gap:5px; margin:0 0 14px; }
+  .rung{
+    flex:1; height:40px; border-radius:9px; background:#20224a;
+    border:1.5px solid #2c2f5e; display:flex; align-items:center; justify-content:center;
+    font-size:15px; font-weight:800; color:#5d628f;
+    transition:all .35s cubic-bezier(.34,1.4,.64,1); position:relative;
+  }
+  .rung.win{ border-color:#f0b23255; color:#8a7a45; }
+  .rung.done{ background:#2f8f5b; border-color:#43c07a; color:#fff; }
+  .rung.done.win{ background:#e8a020; border-color:#ffc95c; color:#241a00; }
+  .rung.now{
+    background:#5865F2; border-color:#98a0ff; color:#fff;
+    transform:scale(1.14); box-shadow:0 0 0 3px #5865f233, 0 5px 16px #5865f266;
+  }
+  .rung .star{ position:absolute; top:-9px; font-size:12px; }
+
+  /* ---------- card ---------- */
+  .card{
+    background:linear-gradient(160deg,#242749,#1c1e3d);
+    border:1px solid #33366b; border-radius:18px;
+    padding:20px 18px; box-shadow:0 10px 34px #00000055;
+  }
+  .qhead{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .qnum{ font-size:11px; font-weight:700; color:#8b90b8; letter-spacing:.4px; flex:1; line-height:1.6; }
+
+  /* ---------- countdown ---------- */
+  .timerwrap{ flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .timer{ position:relative; width:52px; height:52px; }
+  .timer svg{ width:52px; height:52px; transform:rotate(-90deg); }
+  .timer circle{ fill:none; stroke-width:5; stroke-linecap:round; }
+  .ring-bg{ stroke:#2c2f5e; }
+  .ring-fg{ stroke:#5fe39b; transition:stroke .3s; }
+  .tnum{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:19px; font-weight:800; color:#5fe39b; transition:color .3s;
+    font-variant-numeric:tabular-nums;
+  }
+  .tcap{ font-size:10px; font-weight:800; color:#5fe39b; letter-spacing:.3px; transition:color .3s; }
+  .timer.warn .ring-fg{ stroke:#f0b232; } .timer.warn .tnum{ color:#f0b232; }
+  .timer.danger .ring-fg{ stroke:#ff6b6b; } .timer.danger .tnum{ color:#ff6b6b; }
+  .timer.danger{ animation:tick 1s ease-in-out infinite; }
+  @keyframes tick{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.12); } }
+  /* reading phase: calm grey, no pulsing, nothing to panic about */
+  .timerwrap.grace .ring-fg{ stroke:#6b70a0; }
+  .timerwrap.grace .tnum{ color:#8b90b8; font-size:17px; }
+  .timerwrap.grace .tcap{ color:#8b90b8; }
+  .timerwrap.warn .tcap{ color:#f0b232; }
+  .timerwrap.danger .tcap{ color:#ff6b6b; }
+  /* the hand-off from reading time to answering time */
+  @keyframes handoff{ 0%{ transform:scale(1); } 40%{ transform:scale(1.3); } 100%{ transform:scale(1); } }
+  .timerwrap.handoff .timer{ animation:handoff .5s ease-out; }
+  .timerwrap.off{ display:none; }
+  /* the whole card flinches when time is nearly up */
+  .card.danger{ border-color:#ff6b6b88; box-shadow:0 10px 34px #00000055, 0 0 0 2px #ff6b6b33; }
+  .q{
+    font-size:23px; font-weight:800; line-height:1.85; text-align:center;
+    margin:0 0 20px; min-height:78px; display:flex; align-items:center; justify-content:center;
+  }
+
+  .opts{ display:flex; flex-direction:column; gap:10px; }
+  .opt{
+    display:flex; align-items:center; gap:12px; width:100%; text-align:right;
+    padding:14px 14px; border:1.5px solid #3a3d75; border-radius:13px;
+    background:#191b38; color:#fff; font-family:inherit;
+    font-size:19px; font-weight:700; line-height:1.7; cursor:pointer;
+    transition:transform .12s, background .18s, border-color .18s;
+  }
+  .opt:active{ transform:scale(.98); }
+  .opt .k{
+    flex:0 0 auto; width:30px; height:30px; border-radius:50%;
+    background:#2c2f5e; color:#c9cdf5; font-size:14px; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .opt.sel{ background:#3a3266; border-color:#f0b232; }
+  .opt.sel .k{ background:#f0b232; color:#241a00; }
+  .opt.right{ background:#2f8f5b; border-color:#5fe39b; }
+  .opt.right .k{ background:#5fe39b; color:#06341c; }
+  .opt.wrong{ background:#a13b3b; border-color:#ff8f8f; }
+  .opt.wrong .k{ background:#ff8f8f; color:#4a0d0d; }
+  .opt.gone{ opacity:.18; pointer-events:none; }
+  .opt.lock{ pointer-events:none; }
+  @keyframes blink{ 0%,100%{ background:#3a3266; } 50%{ background:#5a4a9a; } }
+  .opt.think{ animation:blink .45s ease-in-out 3; }
+
+  /* ---------- actions ---------- */
+  .go{
+    width:100%; margin-top:16px; padding:15px; border:0; border-radius:13px;
+    background:linear-gradient(145deg,#f0b232,#d3901a); color:#241a00;
+    font-family:inherit; font-size:19px; font-weight:800; cursor:pointer;
+    transition:opacity .2s, transform .12s;
+  }
+  .go:disabled{ opacity:.28; cursor:default; }
+  .go:active:not(:disabled){ transform:scale(.98); }
+
+  .lifelines{ display:flex; gap:9px; margin-top:14px; }
+  .ll{
+    flex:1; padding:11px 6px; border:1.5px solid #3a3d75; border-radius:12px;
+    background:#191b38; color:#c9cdf5; font-family:inherit;
+    font-size:14px; font-weight:700; cursor:pointer; transition:opacity .2s;
+  }
+  .ll:active{ background:#242749; }
+  .ll:disabled{ opacity:.25; cursor:default; }
+  .ll b{ color:#f0b232; }
+
+  /* ---------- feedback ---------- */
+  .flash{
+    text-align:center; font-size:20px; font-weight:800; margin-top:16px;
+    min-height:30px; line-height:1.6;
+  }
+  .flash.good{ color:#5fe39b; }
+  .flash.bad{ color:#ff9d9d; }
+  .hintbox{
+    margin-top:14px; padding:12px 14px; border-radius:12px;
+    background:#2b2450; border:1.5px dashed #f0b23277;
+    font-size:17px; line-height:1.9; color:#ffe2a8; display:none;
+  }
+
+  /* ---------- screens ---------- */
+  .screen{ display:none; }
+  .screen.on{ display:block; }
+
+  .hero{ text-align:center; padding:26px 6px 8px; }
+  .hero h1{ font-size:31px; font-weight:800; margin:0 0 6px; line-height:1.5; }
+  .hero h1 em{ font-style:normal; color:#f0b232; }
+  .hero p{ font-size:17px; line-height:2; color:#b9bde0; margin:0 auto 4px; max-width:400px; }
+  .rules{
+    text-align:right; background:#1c1e3d; border:1px solid #33366b;
+    border-radius:14px; padding:16px 18px; margin:18px 0 4px;
+  }
+  .rules li{ font-size:16px; line-height:2.1; color:#d5d8f0; margin-bottom:2px; }
+  .rules b{ color:#f0b232; }
+  .trophy{ font-size:62px; line-height:1; margin-bottom:6px; }
+
+  #confetti{ position:fixed; inset:0; pointer-events:none; display:none; z-index:9; }
+
+  .foot{ text-align:center; font-size:11px; color:#4a4e78; margin-top:18px; }
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="wrap">
+
+  <div class="top">
+    <div class="crest">
+      <svg viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
+    </div>
+    <div class="title">مَنْ يَرْبَحُ الدِيسْكُورْد؟<span>اِصْعَدْ إِلَى الدَّرَجَةِ ٦</span></div>
+    <div class="best" id="bestBox" style="display:none">أَفْضَل نَتِيجَة<b id="bestVal">٠</b></div>
+  </div>
+
+  <!-- ============ START ============ -->
+  <div class="screen on" id="scStart">
+    <div class="card">
+      <div class="hero">
+        <div class="trophy">🏆</div>
+        <h1>أَهْلًا <em id="heroName">يَا بُنَيّ</em></h1>
+        <p>لِتَفْتَحَ دِيسْكُورْد، عَلَيْكَ أَنْ تَصْعَدَ السُّلَّمَ.</p>
+      </div>
+      <ul class="rules">
+        <li>🎯 اِصْعَدْ إِلَى الدَّرَجَةِ <b id="rTarget">٦</b> مِنْ <b id="rTotal">٧</b>.</li>
+        <li>✅ إِجَابَة صَحِيحَة = <b>دَرَجَة إِلَى الأَعْلَى</b>.</li>
+        <li>❌ إِجَابَة خَاطِئَة = <b>دَرَجَتَانِ إِلَى الأَسْفَل</b>.</li>
+        <li id="rGraceLi">👀 <b id="rGrace">٦٠</b> ثَانِيَةً لِتَقْرَأَ السُّؤَالَ بِرَاحَتِك.</li>
+        <li>⏰ ثُمَّ <b id="rSecs">١٠</b> ثَوَانٍ لِتَخْتَارَ إِجَابَتَك، وَإِلَّا خَسِرْتَ السُّؤَال.</li>
+        <li>💡 عِنْدَكَ مُسَاعَدَات، اِسْتَعْمِلْهَا بِحِكْمَة.</li>
+        <li>🔁 لَا تَخَفْ، لَا يُوجَدُ خُسْرَان — فَقَطْ حَاوِلْ مِنْ جَدِيد.</li>
+      </ul>
+      <button class="go" id="startBtn">هَيَّا نَبْدَأ!</button>
+    </div>
+    <div class="foot">Discord · Family Edition</div>
+  </div>
+
+  <!-- ============ GAME ============ -->
+  <div class="screen" id="scGame">
+    <div class="ladder" id="ladder"></div>
+    <div class="card" id="qcard">
+      <div class="qhead">
+        <div class="qnum" id="qnum"></div>
+        <div class="timerwrap" id="timerWrap">
+          <div class="timer" id="timer">
+            <svg viewBox="0 0 52 52">
+              <circle class="ring-bg" cx="26" cy="26" r="22"></circle>
+              <circle class="ring-fg" cx="26" cy="26" r="22" id="ringFg"></circle>
+            </svg>
+            <div class="tnum" id="tnum">١٠</div>
+          </div>
+          <div class="tcap" id="tcap">أَجِبْ</div>
+        </div>
+      </div>
+      <div class="q" id="qtext"></div>
+      <div class="opts" id="opts"></div>
+      <div class="hintbox" id="hintbox"></div>
+      <button class="go" id="lockBtn" disabled>إِجَابَة نِهَائِيَّة</button>
+      <div class="flash" id="flash"></div>
+      <div class="lifelines">
+        <button class="ll" id="ll5050">٥٠ : ٥٠ <b id="c5050"></b></button>
+        <button class="ll" id="llHint">💡 مُسَاعَدَة <b id="cHint"></b></button>
+      </div>
+    </div>
+    <div class="foot">اِقْرَأِ السُّؤَالَ بِهُدُوء 🙂</div>
+  </div>
+
+  <!-- ============ WIN ============ -->
+  <div class="screen" id="scWin">
+    <div class="card">
+      <div class="hero">
+        <div class="trophy" id="winTrophy">🎉</div>
+        <h1 id="winTitle">مَبْرُوك!</h1>
+        <p id="winMsg">لَقَدْ وَصَلْتَ إِلَى الدَّرَجَةِ المَطْلُوبَة. دِيسْكُورْد مَفْتُوحٌ لَك!</p>
+      </div>
+      <button class="go" id="openBtn" style="background:linear-gradient(145deg,#5865F2,#4752c4);color:#fff">اِفْتَحْ دِيسْكُورْد</button>
+      <button class="ll" id="bonusBtn" style="width:100%;margin-top:10px">👑 سُؤَال إِضَافِيّ لِلتَّاج</button>
+      <button class="ll" id="againBtn" style="width:100%;margin-top:10px">🔁 اِلْعَبْ مَرَّة أُخْرَى</button>
+    </div>
+  </div>
+</div>
+
+<script src="questions.js"></script>
+<script>
+/* =====================================================================
+   الإِعْدَادَات · SETTINGS — tweak these, nothing else needs changing.
+   ===================================================================== */
+const CONFIG = {
+  RUNGS:        7,   // how many rungs the ladder has
+  TARGET:       6,   // rung he must REACH to unlock Discord
+  PENALTY:      2,   // rungs lost on a wrong answer
+  // Safe haven: once he reaches this rung he can never fall below it again.
+  // 0 = off (your original rule: a wrong answer always costs a full 2 rungs).
+  // If a run ever drags on too long, set this to 3 — that is the one dial
+  // that shortens a bad night without making the quiz feel easy.
+  SAFE_RUNG:    0,
+  LIFE_5050:    2,   // how many 50:50 uses per run
+  LIFE_HINT:    2,   // how many hint uses per run
+  SON_NAME:     "يَا بُنَيّ",          // shown on the welcome screen
+  SOUND:        true,
+
+  // ---- the clock ----
+  TIMER_SECONDS: 10,  // seconds to answer. 0 = no timer at all.
+  // Quiet seconds BEFORE the answer countdown starts — his reading time.
+  // The ring counts this down in grey under the label "اِقْرَأ", then flips to
+  // the green/amber/red answer clock above. Set to 0 to drop straight into
+  // the 10-second countdown with no reading time at all.
+  READ_GRACE:    60,
+  DISCORD_WEB:  "https://discord.gg/lofigirl",  // same target as job-prank
+  DISCORD_APP:  "discord://"
+};
+/* ===================================================================== */
+
+const $ = id => document.getElementById(id);
+const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const KEYS = ["أ", "ب", "ج", "د"];
+
+/* ---------- state ---------- */
+let deck = [];        // shuffled queue of questions not yet asked this run
+let cur = null;       // { q, a[], c } with answers already shuffled
+let rung = 0;         // current position on the ladder
+let asked = 0;        // questions seen this run
+let picked = -1;      // currently selected option index
+let locked = false;   // answer being resolved — ignore taps
+let n5050 = 0, nHint = 0;
+let bonusRound = false;
+
+/* ---------- helpers ---------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Draw the next question, reshuffling the bank once it runs dry.
+function draw(){
+  if (!deck.length) deck = shuffle(QUESTIONS);
+  const src = deck.pop();
+  // Shuffle the four answers so the right one is never in a fixed slot.
+  const order = shuffle([0, 1, 2, 3]);
+  return {
+    q: src.q,
+    hint: src.hint || "",
+    a: order.map(i => src.a[i]),
+    c: order.indexOf(src.c)
+  };
+}
+
+/* ---------- sound (WebAudio, no files) ---------- */
+let ac = null;
+function tone(freq, dur, type = "sine", vol = 0.16, delay = 0){
+  if (!CONFIG.SOUND) return;
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    const t = ac.currentTime + delay;
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ac.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  } catch(e){}
+}
+const sfx = {
+  tap:   () => tone(520, .07, "triangle", .10),
+  lock:  () => { tone(300, .12, "square", .09); tone(380, .12, "square", .08, .10); },
+  right: () => [523, 659, 784, 1046].forEach((f, i) => tone(f, .30, "triangle", .16, i * .09)),
+  wrong: () => { tone(180, .30, "sawtooth", .12); tone(120, .40, "sawtooth", .12, .12); },
+  win:   () => [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone(f, .50, "triangle", .18, i * .13))
+};
+function buzz(ms){ try { navigator.vibrate && navigator.vibrate(ms); } catch(e){} }
+
+/* ---------- countdown clock ----------
+   One rAF loop per question. It survives the app being backgrounded: time
+   spent hidden is subtracted, so switching away never costs him a question.
+*/
+const RING_LEN = 2 * Math.PI * 22;
+let tRAF = null, tRunning = false, tPausedMs = 0, tHiddenAt = 0, tLastBeep = -1;
+const nowMs = () => (typeof performance !== "undefined" ? performance.now() : Date.now());
+
+function paintRing(frac, secs, isGrace){
+  const w = $("timerWrap"), t = $("timer");
+  $("ringFg").style.strokeDasharray = RING_LEN;
+  $("ringFg").style.strokeDashoffset = RING_LEN * (1 - frac);
+  $("tnum").textContent = AR(secs);
+  $("tcap").textContent = isGrace ? "👀 اِقْرَأ" : "أَجِبْ";
+  const warn = !isGrace && secs <= 5 && secs > 3;
+  const danger = !isGrace && secs <= 3;
+  w.classList.toggle("grace", isGrace);
+  w.classList.toggle("warn", warn);
+  w.classList.toggle("danger", danger);
+  t.classList.toggle("warn", warn);
+  t.classList.toggle("danger", danger);
+  $("qcard").classList.toggle("danger", danger);
+}
+
+function stopTimer(){
+  tRunning = false;
+  if (tRAF) cancelAnimationFrame(tRAF);
+  tRAF = null;
+  $("timerWrap").classList.remove("warn", "danger", "grace", "handoff");
+  $("timer").classList.remove("warn", "danger");
+  $("qcard").classList.remove("danger");
+}
+
+function startTimer(){
+  stopTimer();
+  if (!CONFIG.TIMER_SECONDS){ $("timerWrap").classList.add("off"); return; }
+  $("timerWrap").classList.remove("off");
+
+  const grace = (CONFIG.READ_GRACE || 0) * 1000;
+  const total = CONFIG.TIMER_SECONDS * 1000;
+  const t0 = nowMs();
+  tPausedMs = 0; tHiddenAt = 0; tLastBeep = -1; tRunning = true;
+  let handedOff = grace <= 0;
+  paintRing(1, grace > 0 ? CONFIG.READ_GRACE : CONFIG.TIMER_SECONDS, grace > 0);
+
+  (function frame(){
+    if (!tRunning) return;
+    const elapsed = nowMs() - t0 - tPausedMs;
+
+    if (elapsed < grace){                        // reading phase — answer clock held
+      const gLeft = grace - elapsed;
+      paintRing(gLeft / grace, Math.ceil(gLeft / 1000), true);
+      tRAF = requestAnimationFrame(frame);
+      return;
+    }
+    if (!handedOff){                             // reading time is over — announce it
+      handedOff = true;
+      $("timerWrap").classList.add("handoff");
+      setTimeout(() => $("timerWrap").classList.remove("handoff"), 520);
+      tone(660, .10, "triangle", .11); tone(990, .12, "triangle", .11, .09);
+      buzz(25);
+    }
+    const left = Math.max(0, total - (elapsed - grace));
+    const secs = Math.ceil(left / 1000);
+    paintRing(left / total, secs, false);
+
+    if (secs <= 3 && secs > 0 && secs !== tLastBeep){   // heartbeat on the last 3
+      tLastBeep = secs;
+      tone(880, .07, "square", .09);
+    }
+    if (left <= 0){ tRunning = false; timeUp(); return; }
+    tRAF = requestAnimationFrame(frame);
+  })();
+}
+
+// Backgrounding the app pauses the clock instead of failing him.
+document.addEventListener("visibilitychange", () => {
+  if (!tRunning) return;
+  if (document.hidden) tHiddenAt = nowMs();
+  else if (tHiddenAt){ tPausedMs += nowMs() - tHiddenAt; tHiddenAt = 0; }
+});
+
+function timeUp(){
+  if (locked) return;
+  locked = true;
+  stopTimer();
+  tone(220, .5, "sawtooth", .14); buzz([90, 60, 90]);
+  const opts = [...$("opts").children];
+  opts.forEach(el => { el.classList.add("lock"); el.classList.remove("sel"); });
+  $("lockBtn").disabled = true;
+  resolve(opts, true);
+}
+
+/* ---------- ladder ---------- */
+function drawLadder(){
+  const L = $("ladder");
+  L.innerHTML = "";
+  for (let i = 1; i <= CONFIG.RUNGS; i++){
+    const d = document.createElement("div");
+    d.className = "rung";
+    if (i >= CONFIG.TARGET) d.classList.add("win");
+    if (i <= rung) d.classList.add("done");
+    if (i === rung) d.classList.add("now");
+    d.textContent = AR(i);
+    if (i === CONFIG.TARGET){
+      const s = document.createElement("span");
+      s.className = "star"; s.textContent = "⭐";
+      d.appendChild(s);
+    }
+    L.appendChild(d);
+  }
+}
+
+/* ---------- question rendering ---------- */
+function nextQuestion(){
+  cur = draw();
+  asked++;
+  picked = -1;
+  locked = false;
+
+  $("qnum").textContent = bonusRound
+    ? "👑 سُؤَالُ التَّاج"
+    : "السُّؤَال رَقْم " + AR(asked) + "  ·  أَنْتَ عَلَى الدَّرَجَة " + AR(rung);
+  $("qtext").textContent = cur.q;
+  $("flash").textContent = "";
+  $("flash").className = "flash";
+  $("hintbox").style.display = "none";
+  $("lockBtn").disabled = true;
+  $("lockBtn").textContent = "إِجَابَة نِهَائِيَّة";
+  $("lockBtn").onclick = lockIn;   // never inherit the previous reveal's handler
+
+  const box = $("opts");
+  box.innerHTML = "";
+  cur.a.forEach((text, i) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = '<span class="k">' + KEYS[i] + '</span><span>' + text + '</span>';
+    b.addEventListener("click", () => select(i));
+    box.appendChild(b);
+  });
+
+  drawLadder();
+  updateLifelines();
+  startTimer();
+}
+
+function select(i){
+  if (locked) return;
+  picked = i;
+  sfx.tap(); buzz(8);
+  [...$("opts").children].forEach((el, k) => el.classList.toggle("sel", k === i));
+  $("lockBtn").disabled = false;
+}
+
+/* ---------- lock in + suspense ---------- */
+function lockIn(){
+  if (locked || picked < 0) return;
+  locked = true;
+  stopTimer();                 // the clock stops the moment he commits
+  sfx.lock(); buzz(20);
+
+  const els = [...$("opts").children];
+  els.forEach(el => el.classList.add("lock"));
+  els[picked].classList.add("think");
+  $("lockBtn").disabled = true;
+  $("lockBtn").textContent = "…";
+  $("flash").textContent = "هَلْ هِيَ صَحِيحَة؟";
+  $("flash").className = "flash";
+
+  setTimeout(() => resolve(els), 1500);
+}
+
+function resolve(els, timedOut){
+  const ok = !timedOut && picked === cur.c;
+  if (!timedOut) els[picked].classList.remove("think");
+
+  if (timedOut){
+    // Ran out of clock: costs exactly what a wrong answer costs.
+    els[cur.c].classList.add("right");
+    const before = rung;
+    const floor = (CONFIG.SAFE_RUNG > 0 && rung >= CONFIG.SAFE_RUNG) ? CONFIG.SAFE_RUNG : 0;
+    if (!bonusRound) rung = Math.max(floor, rung - CONFIG.PENALTY);
+    const lost = before - rung;
+    $("flash").textContent = "⏰ اِنْتَهَى الوَقْت! الإِجَابَةُ الصَّحِيحَةُ بِاللَّوْنِ الأَخْضَر."
+      + (lost > 0 ? " نَزَلْتَ " + AR(lost) + (lost === 1 ? " دَرَجَة." : " دَرَجَات.") : "");
+    $("flash").className = "flash bad";
+  } else if (ok){
+    els[picked].classList.add("right");
+    sfx.right(); buzz([15, 40, 15]);
+    // The crown round is played for glory only — it never moves the ladder,
+    // so a miss can't take Discord away once he's already earned it.
+    if (!bonusRound) rung = Math.min(CONFIG.RUNGS, rung + 1);
+    $("flash").textContent = bonusRound
+      ? "✅ صَحِيح! التَّاجُ لَك 👑"
+      : "✅ إِجَابَة صَحِيحَة! صَعِدْتَ دَرَجَة.";
+    $("flash").className = "flash good";
+  } else {
+    els[picked].classList.add("wrong");
+    els[cur.c].classList.add("right");
+    sfx.wrong(); buzz([60, 50, 60]);
+    const before = rung;
+    const floor = (CONFIG.SAFE_RUNG > 0 && rung >= CONFIG.SAFE_RUNG) ? CONFIG.SAFE_RUNG : 0;
+    if (!bonusRound) rung = Math.max(floor, rung - CONFIG.PENALTY);
+    const lost = before - rung;
+    $("flash").textContent = bonusRound
+      ? "❌ الإِجَابَةُ الصَّحِيحَةُ بِاللَّوْنِ الأَخْضَر. لَا بَأْس، دِيسْكُورْد مَا زَالَ لَك."
+      : lost > 0
+        ? "❌ الإِجَابَةُ الصَّحِيحَةُ بِاللَّوْنِ الأَخْضَر. نَزَلْتَ " + AR(lost) + (lost === 1 ? " دَرَجَة." : " دَرَجَات.")
+        : "❌ الإِجَابَةُ الصَّحِيحَةُ بِاللَّوْنِ الأَخْضَر. أَنْتَ فِي البِدَايَة، لَمْ تَخْسَرْ شَيْئًا.";
+    $("flash").className = "flash bad";
+  }
+
+  drawLadder();
+  saveBest();
+
+  // Crown round: one question, right or wrong, then straight back to the win screen.
+  if (bonusRound){
+    setTimeout(() => {
+      bonusRound = false;
+      showWin(ok ? "crown" : "normal");
+    }, 2100);
+    return;
+  }
+
+  if (rung >= CONFIG.TARGET){
+    setTimeout(() => showWin("normal"), 1500);
+  } else {
+    $("lockBtn").disabled = false;
+    $("lockBtn").textContent = "السُّؤَالُ التَّالِي ←";
+    $("lockBtn").onclick = () => { $("lockBtn").onclick = lockIn; nextQuestion(); };
+  }
+}
+
+/* ---------- lifelines ---------- */
+function updateLifelines(){
+  $("c5050").textContent = "(" + AR(CONFIG.LIFE_5050 - n5050) + ")";
+  $("cHint").textContent = "(" + AR(CONFIG.LIFE_HINT - nHint) + ")";
+  $("ll5050").disabled = n5050 >= CONFIG.LIFE_5050;
+  $("llHint").disabled = nHint >= CONFIG.LIFE_HINT || !cur || !cur.hint;
+}
+
+$("ll5050").addEventListener("click", () => {
+  if (locked || n5050 >= CONFIG.LIFE_5050) return;
+  n5050++;
+  // Hide two of the three wrong answers.
+  const wrongs = shuffle([0, 1, 2, 3].filter(i => i !== cur.c)).slice(0, 2);
+  const els = [...$("opts").children];
+  wrongs.forEach(i => {
+    els[i].classList.add("gone");
+    if (picked === i){ picked = -1; els[i].classList.remove("sel"); $("lockBtn").disabled = true; }
+  });
+  tone(660, .12, "triangle", .12); tone(880, .12, "triangle", .12, .10);
+  updateLifelines();
+});
+
+$("llHint").addEventListener("click", () => {
+  if (locked || nHint >= CONFIG.LIFE_HINT || !cur.hint) return;
+  nHint++;
+  const h = $("hintbox");
+  h.textContent = "💡 " + cur.hint;
+  h.style.display = "block";
+  tone(760, .14, "sine", .12);
+  updateLifelines();
+});
+
+/* ---------- best score ---------- */
+function saveBest(){
+  try {
+    const b = Math.max(rung, +(localStorage.getItem("quizBest") || 0));
+    localStorage.setItem("quizBest", b);
+    $("bestVal").textContent = AR(b);
+    $("bestBox").style.display = b > 0 ? "" : "none";
+  } catch(e){}
+}
+
+/* ---------- screens ---------- */
+function show(id){
+  ["scStart", "scGame", "scWin"].forEach(s => $(s).classList.toggle("on", s === id));
+  window.scrollTo(0, 0);
+}
+
+function startRun(){
+  deck = shuffle(QUESTIONS);
+  rung = 0; asked = 0; n5050 = 0; nHint = 0; bonusRound = false;
+  show("scGame");
+  nextQuestion();
+}
+
+function showWin(kind){
+  sfx.win(); buzz([20, 60, 20, 60, 20]);
+  const crown = kind === "crown";
+  $("winTrophy").textContent = crown ? "👑" : "🎉";
+  $("winTitle").textContent = crown ? "بَطَل! نِلْتَ التَّاج" : "مَبْرُوك!";
+  $("winMsg").textContent = crown
+    ? "أَجَبْتَ عَنْ سُؤَالِ التَّاجِ بِنَجَاح. أَنْتَ الأَفْضَل!"
+    : "لَقَدْ وَصَلْتَ إِلَى الدَّرَجَةِ " + AR(rung) + ". دِيسْكُورْد مَفْتُوحٌ لَك!";
+  $("bonusBtn").style.display = crown ? "none" : "";
+  show("scWin");
+  confetti();
+}
+
+/* ---------- confetti ---------- */
+function confetti(){
+  const cv = $("confetti"), ctx = cv.getContext("2d");
+  cv.width = innerWidth; cv.height = innerHeight; cv.style.display = "block";
+  const cols = ["#f0b232", "#5865F2", "#5fe39b", "#ff8f8f", "#fff"];
+  const bits = Array.from({ length: 110 }, () => ({
+    x: Math.random() * cv.width, y: -20 - Math.random() * cv.height,
+    w: 5 + Math.random() * 7, h: 8 + Math.random() * 10,
+    vy: 1.8 + Math.random() * 3, vx: -1 + Math.random() * 2,
+    r: Math.random() * 6.28, vr: -0.14 + Math.random() * 0.28,
+    c: cols[Math.floor(Math.random() * cols.length)]
+  }));
+  const t0 = Date.now();
+  (function frame(){
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    bits.forEach(b => {
+      b.x += b.vx; b.y += b.vy; b.r += b.vr;
+      ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.r);
+      ctx.fillStyle = b.c; ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+      ctx.restore();
+    });
+    if (Date.now() - t0 < 4200) requestAnimationFrame(frame);
+    else cv.style.display = "none";
+  })();
+}
+
+/* ---------- Discord hand-off (same approach as job-prank) ---------- */
+function openDiscord(){
+  const ua = navigator.userAgent || "";
+
+  // Android: an App Link intent hands the https URL to the installed com.discord
+  // app, with its own fallback to the web if the app isn't there.
+  if (/Android/i.test(ua)){
+    const u = new URL(CONFIG.DISCORD_WEB);
+    location.href = "intent://" + u.host + u.pathname + u.search +
+      "#Intent;scheme=https;package=com.discord;" +
+      "S.browser_fallback_url=" + encodeURIComponent(CONFIG.DISCORD_WEB) + ";end";
+    return;
+  }
+
+  // iOS / others: fire the app scheme, fall back to web only if we're still here.
+  let left = false;
+  const bail = () => { left = true; };
+  document.addEventListener("visibilitychange", () => { if (document.hidden) left = true; });
+  window.addEventListener("pagehide", bail, { once: true });
+  window.addEventListener("blur", bail, { once: true });
+  location.href = CONFIG.DISCORD_APP;
+  setTimeout(() => { if (!left && !document.hidden) location.href = CONFIG.DISCORD_WEB; }, 2500);
+}
+
+/* ---------- wiring ---------- */
+$("heroName").textContent = CONFIG.SON_NAME;
+$("rTarget").textContent = AR(CONFIG.TARGET);
+$("rTotal").textContent = AR(CONFIG.RUNGS);
+$("rSecs").textContent = AR(CONFIG.TIMER_SECONDS);
+$("rGrace").textContent = AR(CONFIG.READ_GRACE);
+$("tnum").textContent = AR(CONFIG.READ_GRACE || CONFIG.TIMER_SECONDS);
+$("tcap").textContent = CONFIG.READ_GRACE ? "👀 اِقْرَأ" : "أَجِبْ";
+if (!CONFIG.READ_GRACE) $("rGraceLi").style.display = "none";
+if (!CONFIG.TIMER_SECONDS) $("rSecs").parentNode.style.display = "none";
+$("lockBtn").onclick = lockIn;
+$("startBtn").addEventListener("click", startRun);
+$("againBtn").addEventListener("click", startRun);
+$("openBtn").addEventListener("click", openDiscord);
+$("bonusBtn").addEventListener("click", () => {
+  bonusRound = true;
+  show("scGame");
+  nextQuestion();
+});
+saveBest();
+
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
